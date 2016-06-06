@@ -35,8 +35,12 @@ task :delete_obsolete_virtualbox_vagrant_master_vms do
   puts "delete_obsolete_virtualbox_vagrant_master_vms: Nothing to do" if vms_to_delete.empty?
 
   vms_to_delete.each do |id|
-    puts "delete_obsolete_virtualbox_vagrant_master_vms: Deleting VM: #{id}"
-    sh "vboxmanage unregistervm #{id} --delete"
+    begin
+      puts "delete_obsolete_virtualbox_vagrant_master_vms: Deleting VM: #{id}"
+      sh "vboxmanage unregistervm #{id} --delete"
+    rescue => error
+      puts "WARNING: Failed to delete #{id}"
+    end
   end
 end
 
