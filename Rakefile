@@ -33,7 +33,9 @@ end
 # Get a list of the Virtual Box Master VM ids from the currently installed vagrant boxes.
 def get_vagrant_virtualbox_mastervms_guid
   return Dir["#{vagrant_home}/boxes/**/virtualbox/master_id"].map do |path|
-    File.open(path).read.chomp
+    File.open(path) do |f|
+      f.read.chomp
+    end
   end
 end
 
