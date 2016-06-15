@@ -24,7 +24,7 @@ end
 
 def vagrant_home
   vagrant_home = ENV['VAGRANT_HOME']
-  vagrant_home = vagrant_home.dup.gsub! '\\', '/' unless vagrant_home.nil? or !windows? # replace backslaches on windows.
+  vagrant_home = vagrant_home.dup.gsub '\\', '/' unless vagrant_home.nil? or !windows? # replace backslaches on windows.
   vagrant_home = "#{ENV['USERPROFILE'].dup.gsub! '\\', '/'}/.vagrant.d" if ENV['USERPROFILE'] and vagrant_home.nil?
   vagrant_home = "~/.vagrant.d" if vagrant_home.nil?
   return vagrant_home
