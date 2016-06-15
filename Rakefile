@@ -87,4 +87,4 @@ task :vagrant_global_status_prune do
 end
 
 desc 'Execute our maintenance tasks'
-task :maintenance => [:vagrant_global_status_prune, :delete_obsolete_virtualbox_vagrant_master_vms]
+task :maintenance => [:vagrant_global_status_prune, :delete_obsolete_virtualbox_vagrant_master_vms, :delete_invalid_vagrant_master_id_files]
