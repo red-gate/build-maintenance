@@ -119,8 +119,10 @@ end
 desc 'Remove every vagrant box using virtualbox as a provider. Yep.'
 task :delete_all_virtualbox_vagrant_boxes do
   provider = 'virtualbox'
-  `vagrant box list`.scan(/([^\s]*)\s+\(#{provider},\s(.*)\)/) do |box, version|
-    sh "vagrant box remove #{box} --box-version #{version} --provider #{provider} --force"
+  Bundler.with_clean_env  do
+    `vagrant box list`.scan(/([^\s]*)\s+\(#{provider},\s(.*)\)/) do |box, version|
+      sh "vagrant box remove #{box} --box-version #{version} --provider #{provider} --force"
+    end
   end
 end
 
