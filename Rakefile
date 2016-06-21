@@ -1,8 +1,13 @@
 require 'rake'
 require 'rake_performance'
+require 'fileutils'
 
 def windows?
   (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
+end
+
+def virtualbox_vm_folder
+  return 'D:/VirtualBox VMs'
 end
 
 def vagrant_home
@@ -35,6 +40,12 @@ def get_all_virtualbox_vm_guids
   return vm_guids
 end
 
+def get_all_virtualbox_vm_names
+  vm_names = []
+  `vboxmanage list vms`.scan(/"(.*)"/) { vm_names << $1 }
+  return vm_names
+end
+
 # Get a list of the Virtual Box Master VM ids from the currently installed vagrant boxes.
 def get_vagrant_virtualbox_mastervms_guid
   return Dir["#{vagrant_home}/boxes/**/virtualbox/master_id"].map do |path|
@@ -60,6 +71,22 @@ task :delete_obsolete_virtualbox_vagrant_master_vms do
       sh "vboxmanage unregistervm #{id} --delete"
     rescue => error
       puts "WARNING: Failed to delete #{id}"
+    end
+  end
+end
+
+desc 'Delete files from the VirtualBox VMs folder that are not linked to any Virtualbox VM. Assumes that the folder name matches the vm name. :/'
+task :clean_virtualbox_vms_folder do
+  vm_names = get_all_virtualbox_vm_names
+  Dir["#{virtualbox_vm_folder}/*"].map do |vm_folder|
+    folder_name = File.basename(vm_folder)
+    unless vm_names.include?(folder_name)
+      puts "Deleting #{folder_name} as it does not seem to be linked to any existing VirtualBox VM"
+      begin
+        FileUtils.rm_rf(vm_folder)
+      rescue => error
+         puts "WARNING: Failed to delete #{vm_folder} with error: #{error}"
+      end
     end
   end
 end
