@@ -89,5 +89,13 @@ task :vagrant_global_status_prune do
   puts "vagrant_global_status_prune: done"
 end
 
+desc 'Remove every vagrant box using virtualbox as a provider. Yep.'
+task :delete_all_virtualbox_vagrant_boxes do
+  provider = 'virtualbox'
+  `vagrant box list`.scan(/([^\s]*)\s+\(#{provider},\s(.*)\)/) do |box, version|
+    sh "vagrant box remove #{box} --box-version #{version} --provider #{provider} --force"
+  end
+end
+
 desc 'Execute our maintenance tasks'
 task :maintenance => [:vagrant_global_status_prune, :delete_obsolete_virtualbox_vagrant_master_vms, :delete_invalid_vagrant_master_id_files]
