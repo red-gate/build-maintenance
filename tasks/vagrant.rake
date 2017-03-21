@@ -124,4 +124,30 @@ namespace :vagrant do
       end
     end
   end
+
+  desc 'Download and initialise our common vagrant boxes'
+  task :download_common_vagrant_boxes do
+
+    vagrant_boxes = [
+      'red-gate/windows-2012r2',
+      'red-gate/windows-2012r2-ssms2008',
+      'red-gate/windows-2012r2-ssms2008r2',
+      'red-gate/windows-2012r2-ssms2012',
+      'red-gate/windows-2012r2-ssms2014',
+      'red-gate/windows-2012r2-ssms2016',
+      'red-gate/windows-2012r2-ssms2017'
+    ]
+
+    vagrant_boxes.each do |box_name|
+      Bundler.with_clean_env do
+        File.delete('Vagrantfile') if File.exist?('Vagrantfile')
+
+        sh "vagrant init #{box_name}"
+        # Download the box, create the master VM (if any), start the VM
+        sh "vagrant up --provider virtualbox"
+        # Destroy the vm
+        sh "vagrant destroy -f"
+      end
+    end
+  end
 end
