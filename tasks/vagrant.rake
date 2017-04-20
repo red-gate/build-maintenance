@@ -150,4 +150,25 @@ namespace :vagrant do
       end
     end
   end
+
+  task :delete_and_download_vagrant_box do
+    box_name = ENV['VAGRANT_BOX_TO_UPDATE']
+    raise 'VAGRANT_BOX_TO_UPDATE environment variable must be set' if box_name.to_s.empty?
+
+    # Remove older versions of the box
+    sh "vagrant box remove #{box_name} --all"
+
+    Bundler.with_clean_env do
+      File.delete('Vagrantfile') if File.exist?('Vagrantfile')
+
+      sh "vagrant init #{box_name}"
+      # Download the box, create the master VM (if any), start the VM
+      sh 'vagrant up --provider virtualbox'
+      # Destroy the vm
+      sh 'vagrant destroy -f'
+    end
+  end
+
+  desc 'Redownload the latest version of a specific vagrant box'
+  task update_specific_vagrant_box: ['delete_and_download_vagrant_box', 'delete_obsolete_virtualbox_vagrant_master_vms']
 end
