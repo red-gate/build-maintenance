@@ -162,10 +162,13 @@ namespace :vagrant do
       File.delete('Vagrantfile') if File.exist?('Vagrantfile')
 
       sh "vagrant init #{box_name}"
-      # Download the box, create the master VM (if any), start the VM
-      sh 'vagrant up --provider virtualbox'
-      # Destroy the vm
-      sh 'vagrant destroy -f'
+      begin
+        # Download the box, create the master VM (if any), start the VM
+        sh 'vagrant up --provider virtualbox'
+      ensure
+        # Destroy the vm
+        sh 'vagrant destroy -f'
+      end
     end
   end
 
