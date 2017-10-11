@@ -127,6 +127,7 @@ namespace :vagrant do
   desc 'Download and initialise our common vagrant boxes'
   task :download_common_vagrant_boxes do
     vagrant_boxes = [
+      'red-gate/windows-10-vs2015',
       'red-gate/windows-10-vs2017',
       'red-gate/windows-2012r2',
       'red-gate/windows-2012r2-ssms2008',
