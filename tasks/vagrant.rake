@@ -155,8 +155,8 @@ namespace :vagrant do
     box_name = ENV['VAGRANT_BOX_TO_UPDATE']
     raise 'VAGRANT_BOX_TO_UPDATE environment variable must be set' if box_name.to_s.empty?
 
-    # Remove older versions of the box
-    sh "vagrant box remove #{box_name} --all"
+    # Remove older versions of the box if any
+    sh "vagrant box remove #{box_name} --all" unless Regexp.new("#{box_name} ").match(`vagrant box list`).nil?
 
     Bundler.with_clean_env do
       File.delete('Vagrantfile') if File.exist?('Vagrantfile')
