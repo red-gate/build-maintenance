@@ -2,6 +2,7 @@ require 'rake'
 require 'rake_performance'
 
 import 'tasks/vagrant.rake'
+import 'tasks/packer.rake'
 
 desc 'Execute our maintenance tasks'
 task maintenance: [
@@ -12,6 +13,7 @@ task maintenance: [
 
 desc ':boom: Delete all vagrant boxes and VirtualBox VMs. :boom:. Then redownload the latest versions of our most used boxes.'
 task deep_maintenance: [
+  'packer:clear_cache',
   'vagrant:delete_all_virtualbox_vagrant_boxes',
   'vagrant:delete_obsolete_virtualbox_vagrant_master_vms',
   'vagrant:clean_virtualbox_vms_folder',
