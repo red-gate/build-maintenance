@@ -130,8 +130,6 @@ namespace :vagrant do
       'red-gate/windows-10-vs2015',
       'red-gate/windows-10-vs2017',
       'red-gate/windows-2012r2',
-      'red-gate/windows-2012r2-ssms2008',
-      'red-gate/windows-2012r2-ssms2008r2',
       'red-gate/windows-2012r2-ssms2012',
       'red-gate/windows-2012r2-ssms2014',
       'red-gate/windows-2012r2-ssms2016',
