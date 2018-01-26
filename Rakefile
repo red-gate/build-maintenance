@@ -14,6 +14,7 @@ task maintenance: [
 desc ':boom: Delete all vagrant boxes and VirtualBox VMs. :boom:. Then redownload the latest versions of our most used boxes.'
 task deep_maintenance: [
   'packer:clear_cache',
+  'vagrant:clean_virtualbox_vms_folder',
   'vagrant:delete_all_virtualbox_vagrant_boxes',
   'vagrant:delete_obsolete_virtualbox_vagrant_master_vms',
   'vagrant:clean_virtualbox_vms_folder',
