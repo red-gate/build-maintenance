@@ -109,6 +109,7 @@ namespace :vagrant do
   task :vagrant_global_status_prune do
     puts 'vagrant_global_status_prune: pruning invalid vagrant environments'
     Bundler.with_clean_env do
+      sh 'vagrant global-status' # to print the current instances before we prune
       sh 'vagrant global-status --prune'
     end
     puts 'vagrant_global_status_prune: done'
