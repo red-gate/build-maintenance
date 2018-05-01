@@ -51,6 +51,24 @@ def vagrant_virtualbox_mastervms_guid
   end
 end
 
+def download_box(box_name)
+  Bundler.with_clean_env do
+    File.delete('Vagrantfile') if File.exist?('Vagrantfile')
+
+    sh "vagrant init #{box_name}"
+    begin
+      # Download the box, create the master VM (if any), start the VM
+      sh 'vagrant up --provider virtualbox'
+    rescue
+      # ignore failures to start the VM. This is sometimes not 100% reliable
+      # and a failure is no big deal if the box was download and the master clone created anyway.
+    ensure
+      # Destroy the vm
+      sh 'vagrant destroy -f'
+    end
+  end
+end
+
 namespace :vagrant do
   desc 'Delete any non running virtualbox VM that is not linked to a vagrant box. (Clean up virtualbox leftover vms after vagrant boxes are removed.)'
   task :delete_obsolete_virtualbox_vagrant_master_vms do
@@ -139,15 +157,7 @@ namespace :vagrant do
     ]
 
     vagrant_boxes.each do |box_name|
-      Bundler.with_clean_env do
-        File.delete('Vagrantfile') if File.exist?('Vagrantfile')
-
-        sh "vagrant init #{box_name}"
-        # Download the box, create the master VM (if any), start the VM
-        sh 'vagrant up --provider virtualbox'
-        # Destroy the vm
-        sh 'vagrant destroy -f'
-      end
+      download_box box_name
     end
   end
 
@@ -158,18 +168,7 @@ namespace :vagrant do
     # Remove older versions of the box if any
     sh "vagrant box remove #{box_name} --all" unless Regexp.new("#{box_name} ").match(`vagrant box list`).nil?
 
-    Bundler.with_clean_env do
-      File.delete('Vagrantfile') if File.exist?('Vagrantfile')
-
-      sh "vagrant init #{box_name}"
-      begin
-        # Download the box, create the master VM (if any), start the VM
-        sh 'vagrant up --provider virtualbox'
-      ensure
-        # Destroy the vm
-        sh 'vagrant destroy -f'
-      end
-    end
+    download_box box_name
   end
 
   desc 'Redownload the latest version of a specific vagrant box'
