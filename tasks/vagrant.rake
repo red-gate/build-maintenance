@@ -153,7 +153,14 @@ namespace :vagrant do
       'red-gate/windows-2012r2-ssms2014',
       'red-gate/windows-2012r2-ssms2016',
       'red-gate/windows-2012r2-ssms2017',
-      'red-gate/windows-2016'
+      'red-gate/windows-2016',
+      'red-gate/centos-5-x86-oracle9i2',
+      'red-gate/centos-6-x86-oracle10g2',
+      'red-gate/centos-6-oracle11g1',
+      'red-gate/centos-6-oracle11g2',
+      'red-gate/centos-6-oracle12c1',
+      'red-gate/centos-7-oracle12c1',
+      'red-gate/centos-7-oracle12c2'
     ]
 
     vagrant_boxes.each do |box_name|
