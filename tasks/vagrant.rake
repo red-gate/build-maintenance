@@ -154,6 +154,7 @@ namespace :vagrant do
       'red-gate/windows-2012r2-ssms2016',
       'red-gate/windows-2012r2-ssms2017',
       'red-gate/windows-2016',
+      'red-gate/windows-2019-core',
       'red-gate/centos-5-x86-oracle9i2',
       'red-gate/centos-6-x86-oracle10g2',
       'red-gate/centos-6-oracle11g1',
