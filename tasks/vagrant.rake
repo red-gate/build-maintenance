@@ -136,6 +136,15 @@ namespace :vagrant do
     puts 'vagrant_global_status_prune: done'
   end
 
+  desc 'Prune old boxes'
+  task :vagrant_box_prune do
+    puts 'vagrant_box_prune: pruning old vagrant boxes'
+    Bundler.with_clean_env do
+      sh 'vagrant box prune --provider virtualbox'
+    end
+    puts 'vagrant_box_prune: done'
+  end
+
   desc 'Remove every vagrant box using virtualbox as a provider. Yep.'
   task :delete_all_virtualbox_vagrant_boxes do
     provider = 'virtualbox'
