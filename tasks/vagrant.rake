@@ -57,11 +57,14 @@ def download_box(box_name)
 
     sh "vagrant init #{box_name}"
     begin
-      # Download the box, create the master VM (if any), start the VM
+      # Run "vagrant box update" before "vagrant up", in case an older version of the box
+      # is already present... (so that we can get the latest version)
+      sh 'vagrant box update --provider virtualbox'
+      # Start the VM (which will create the master VM if need be)
       sh 'vagrant up --provider virtualbox'
     rescue
       # ignore failures to start the VM. This is sometimes not 100% reliable
-      # and a failure is no big deal if the box was download and the master clone created anyway.
+      # and a failure is no big deal if the box was downloaded and the master clone created anyway.
     ensure
       # Destroy the vm
       sh 'vagrant destroy -f'
@@ -173,10 +176,10 @@ namespace :vagrant do
     box_name = ENV['VAGRANT_BOX_TO_UPDATE']
     raise 'VAGRANT_BOX_TO_UPDATE environment variable must be set' if box_name.to_s.empty?
 
-    # Remove older versions of the box if any
-    sh "vagrant box remove #{box_name} --all" unless Regexp.new("#{box_name} ").match(`vagrant box list`).nil?
-
     download_box box_name
+
+    # Remove older versions of the box if any. (this might fail if the box is in use, which is fine.)
+    sh "vagrant box prune --name #{box_name} --provider virtualbox"
   end
 
   desc 'Redownload the latest version of a specific vagrant box'
