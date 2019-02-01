@@ -3,6 +3,7 @@ require 'rake_performance'
 
 import 'tasks/vagrant.rake'
 import 'tasks/packer.rake'
+import 'tasks/localdb.rake'
 
 desc 'Execute our maintenance tasks'
 task maintenance: [
