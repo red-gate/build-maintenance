@@ -155,34 +155,6 @@ namespace :vagrant do
     end
   end
 
-  desc 'Download and initialise our common vagrant boxes'
-  task :download_common_vagrant_boxes do
-    vagrant_boxes = [
-      'red-gate/centos-5-x86-oracle9i2',
-      'red-gate/centos-6-x86-oracle10g2',
-      'red-gate/centos-6-oracle11g1',
-      'red-gate/centos-6-oracle11g2',
-      'red-gate/centos-6-oracle12c1',
-      'red-gate/centos-7-oracle12c1',
-      'red-gate/centos-7-oracle12c2',
-      'red-gate/windows-10-vs2017',
-      'red-gate/windows-2012r2-ssms2008',
-      'red-gate/windows-2012r2-ssms2012',
-      'red-gate/windows-2012r2-ssms2014',
-      'red-gate/windows-2012r2-ssms2016',
-      'red-gate/windows-2012r2-ssms2017',
-      'red-gate/windows-2012r2-ssms2018',
-      'red-gate/windows-2016',
-      'red-gate/windows-2016-vs2015',
-      'red-gate/windows-2016-vs2017',
-      'red-gate/windows-2019-core'
-    ]
-
-    vagrant_boxes.each do |box_name|
-      download_box box_name
-    end
-  end
-
   task :delete_and_download_vagrant_box do
     box_name = ENV['VAGRANT_BOX_TO_UPDATE']
     raise 'VAGRANT_BOX_TO_UPDATE environment variable must be set' if box_name.to_s.empty?
