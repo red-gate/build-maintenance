@@ -1,3 +1,5 @@
+require 'fileutils'
+
 def packer_cache_dir
   packer_cache_dir = ENV['PACKER_CACHE_DIR']
   packer_cache_dir = packer_cache_dir.dup.tr '\\', '/' unless packer_cache_dir.nil? || !windows? # replace backslaches on windows.
@@ -11,7 +13,7 @@ namespace :packer do
 
     Dir["#{packer_cache_dir}/*"].each do |file|
       puts "Deleting #{file}"
-      File.delete(file)
+      FileUtils.rm_rf(file)
     end
   end
 end
