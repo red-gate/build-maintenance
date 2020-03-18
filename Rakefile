@@ -16,7 +16,7 @@ task maintenance: [
 desc '💥 Delete all vagrant boxes and VirtualBox VMs. 💥.'
 task deep_maintenance: [
   'packer:clear_cache',
-  'vagrant:delete_all_virtualbox_vagrant_boxes',
+  'vagrant:delete_all_vagrant_boxes',
   'vagrant:delete_obsolete_virtualbox_vagrant_master_vms',
   'vagrant:clean_virtualbox_vms_folder'
 ]

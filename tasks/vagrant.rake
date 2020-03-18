@@ -1,7 +1,29 @@
 require 'fileutils'
 
+# Cross-platform way of finding an executable in the $PATH.
+#
+#   which('ruby') #=> /usr/bin/ruby
+def which(cmd)
+  exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exts.each do |ext|
+      exe = File.join(path, "#{cmd}#{ext}")
+      return exe if File.executable?(exe) && !File.directory?(exe)
+    end
+  end
+  nil
+end
+
 def windows?
   (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
+end
+
+def virtualbox?
+  which('vboxmanage') != nil
+end
+
+def provider
+  'virtualbox'
 end
 
 def virtualbox_vm_folder
@@ -59,9 +81,9 @@ def download_box(box_name)
     begin
       # Run "vagrant box update" before "vagrant up", in case an older version of the box
       # is already present... (so that we can get the latest version)
-      sh 'vagrant box update --provider virtualbox'
+      sh "vagrant box update --provider #{provider}"
       # Start the VM (which will create the master VM if need be)
-      sh 'vagrant up --provider virtualbox'
+      sh "vagrant up --provider #{provider}"
     rescue
       # ignore failures to start the VM. This is sometimes not 100% reliable
       # and a failure is no big deal if the box was downloaded and the master clone created anyway.
@@ -75,6 +97,8 @@ end
 namespace :vagrant do
   desc 'Delete any non running virtualbox VM that is not linked to a vagrant box. (Clean up virtualbox leftover vms after vagrant boxes are removed.)'
   task :delete_obsolete_virtualbox_vagrant_master_vms do
+    next unless virtualbox?
+
     all_vms = virtualbox_nonrunning_vm_guids
     vms_to_keep = vagrant_virtualbox_mastervms_guid
 
@@ -97,6 +121,8 @@ namespace :vagrant do
 
   desc 'Delete files from the VirtualBox VMs folder that are not linked to any Virtualbox VM. Assumes that the folder name matches the vm name. :/'
   task :clean_virtualbox_vms_folder do
+    next unless virtualbox?
+
     vm_names = all_virtualbox_vm_names
     Dir["#{virtualbox_vm_folder}/*"].map do |vm_folder|
       folder_name = File.basename(vm_folder)
@@ -112,6 +138,8 @@ namespace :vagrant do
 
   desc 'Delete vagrant master_id files that point to virtualbox VMs that somehow do not exist. This will cause vagrant to recreate the master Vm for linked clones'
   task :delete_invalid_vagrant_master_id_files do
+    next unless virtualbox?
+
     vm_guids_to_keep = all_virtualbox_vm_guids
 
     Dir["#{vagrant_home}/boxes/**/virtualbox/master_id"].map do |path|
@@ -140,14 +168,13 @@ namespace :vagrant do
   task :vagrant_box_prune do
     puts 'vagrant_box_prune: pruning old vagrant boxes'
     Bundler.with_clean_env do
-      sh 'vagrant box prune --provider virtualbox'
+      sh "vagrant box prune --provider #{provider}"
     end
     puts 'vagrant_box_prune: done'
   end
 
-  desc 'Remove every vagrant box using virtualbox as a provider. Yep.'
-  task :delete_all_virtualbox_vagrant_boxes do
-    provider = 'virtualbox'
+  desc 'Remove every vagrant boxes. Yep.'
+  task :delete_all_vagrant_boxes do
     Bundler.with_clean_env do
       `vagrant box list`.scan(/([^\s]*)\s+\(#{provider},\s(.*)\)/) do |box, version|
         sh "vagrant box remove #{box} --box-version #{version} --provider #{provider} --force"
@@ -162,7 +189,7 @@ namespace :vagrant do
     download_box box_name
 
     # Remove older versions of the box if any. (this might fail if the box is in use, which is fine.)
-    sh "vagrant box prune --name #{box_name} --provider virtualbox"
+    sh "vagrant box prune --name #{box_name} --provider #{provider}"
   end
 
   desc 'Redownload the latest version of a specific vagrant box'
