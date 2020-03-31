@@ -9,6 +9,7 @@ end
 namespace :packer do
   desc 'Clear the packer cache'
   task :clear_cache do
+    next if packer_cache_dir.nil?
     next unless File.directory?(packer_cache_dir)
 
     Dir["#{packer_cache_dir}/*"].each do |file|
